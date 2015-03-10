@@ -14,7 +14,6 @@ RUN wget http://download.owncloud.org/community/owncloud-latest.tar.bz2 -O /tmp/
 ADD scripts /scripts
 ADD my.cnf.d/ /etc/my.cnf.d/
 RUN chmod +x /scripts/*.sh && \
-    chmod 644 /etc/my.cnf.d/*.cnf && \
     touch /first_run
 
 # Expose our web root and log directories log.
