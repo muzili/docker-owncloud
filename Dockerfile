@@ -12,7 +12,6 @@ RUN wget http://download.owncloud.org/community/owncloud-latest.tar.bz2 -O /tmp/
     chown -R nginx:nginx /usr/share/nginx/owncloud
 
 ADD scripts /scripts
-ADD my.cnf.d/ /etc/my.cnf.d/
 RUN chmod +x /scripts/*.sh && \
     touch /first_run
 
