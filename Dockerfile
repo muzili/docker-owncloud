@@ -2,12 +2,10 @@ FROM muzili/centos-php
 
 MAINTAINER Joshua Lee <muzili@gmail.com>
 
-RUN yum -y install cronie nginx wget tar bzip2 unzip msmtp pcre-devel mysql && \
-    yum -y install php-fpm php-gd php-mysqlnd php-pgsql php-mbstring php-xml php-ldap --enablerepo=remi && \
-    sed -i 's/user = apache/user = nginx/' /etc/php-fpm.d/www.conf && \
-    sed -i 's/group = apache/group = nginx/' /etc/php-fpm.d/www.conf && \
-    yum -y update --enablerepo=remi && \
-    chown nginx:nginx /var/lib/php/session/
+RUN yum -y update --enablerepo=remi,remi-php55 && \
+    yum -y install --enablerepo=remi,remi-php55 \
+    cronie nginx wget tar bzip2 unzip msmtp pcre-devel mysql \
+    php-fpm php-gd php-mysqlnd php-mbstring php-xml php-ldap
 
 RUN wget https://download.owncloud.org/download/community/owncloud-latest.tar.bz2 -O /tmp/oc.tar.bz2 && \
     tar -jxf /tmp/oc.tar.bz2 -C /usr/share/nginx && \
