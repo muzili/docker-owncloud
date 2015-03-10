@@ -3,6 +3,7 @@
 
 # Stop on error
 #set -e
+LOG_DIR=/var/log
 
 FILE=autoconfig.php
 OC_PATH=/usr/share/nginx/owncloud/config/

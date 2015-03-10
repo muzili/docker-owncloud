@@ -1,3 +1,7 @@
+function fixperm() {
+  chown nginx:nginx $OC_PATH$FILE
+}
+
 pre_start_action() {
   mkdir -p $DATA_DIR
   mkdir -p $LOG_DIR/nginx
@@ -6,9 +10,6 @@ pre_start_action() {
 
   chown -R nginx:nginx $DATA_DIR
 
-  function fixperm {
-    chown nginx:nginx $OC_PATH$FILE
-  }
 
   echo "starting installation"
   if [ -z "$MYSQL_ENV_MYSQL_ROOT_PASSWORD" ]; then
