@@ -1,5 +1,5 @@
 #!/bin/bash
-# Starts up the Phabricator stack within the container.
+# Starts up the owncloud stack within the container.
 
 # Stop on error
 #set -e
