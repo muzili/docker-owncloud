@@ -7,7 +7,7 @@ RUN yum -y update --enablerepo=remi,remi-php55 && \
     cronie nginx wget tar bzip2 unzip msmtp pcre-devel mysql \
     php-fpm php-gd php-mysqlnd php-mbstring php-xml php-ldap
 
-RUN wget https://download.owncloud.org/download/community/owncloud-latest.tar.bz2 -O /tmp/oc.tar.bz2 && \
+RUN wget http://download.owncloud.org/community/owncloud-latest.tar.bz2 -O /tmp/oc.tar.bz2 && \
     tar -jxf /tmp/oc.tar.bz2 -C /usr/share/nginx && \
     chown -R nginx:nginx /usr/share/nginx/owncloud
 ADD default.conf /etc/nginx/conf.d/default.conf
