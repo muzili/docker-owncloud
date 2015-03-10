@@ -1,0 +1,36 @@
+mysql:
+  image: muzili/mariadb:latest
+  volumes:
+    - ./data/mariadb/data:/data
+    - ./data/mariadb/log:/var/log/mysql
+  environment:
+    USER: admin
+    PASS: 41aRr.gJCtdk
+
+owncloud:
+  image: muzili/owncloud:latest
+  ports:
+    - "10080:80"
+    - "10443:443"
+  links:
+    - mysql:mysql
+  environment:
+    VIRTUAL_HOST: oc.example.com
+    MTA_DOMAIN: example.com
+    SMTP_HOST: smtp-host
+    SMTP_PORT: smtp-port
+    SMTP_USER: smtp-user
+    SMTP_PASS: smtp-pass
+    SMTP_PROTO: tls
+  volumes:
+    - ./data/owncloud/data:/data
+    - ./data/owncloud/log:/var/log
+
+nginxproxy:
+  image: muzili/nginx-proxy
+  ports:
+    - "80:80"
+    - "443:443"
+  volumes:
+    - /var/run/docker.sock:/tmp/docker.sock
+
