@@ -4,6 +4,7 @@
 # Stop on error
 #set -e
 LOG_DIR=/var/log
+DATA_DIR=/data
 
 FILE=autoconfig.php
 OC_PATH=/usr/share/nginx/owncloud/config/

@@ -1,4 +1,4 @@
-function fixperm() {
+fixperm() {
   chown nginx:nginx $OC_PATH$FILE
 }
 
@@ -9,7 +9,6 @@ pre_start_action() {
   mkdir -p $LOG_DIR/supervisor
 
   chown -R nginx:nginx $DATA_DIR
-
 
   echo "starting installation"
   if [ -z "$MYSQL_ENV_MYSQL_ROOT_PASSWORD" ]; then
@@ -60,11 +59,13 @@ EOL
   esac
 
 
+  #
   if [ -z "$VIRTUAL_HOST" ]; then
       echo "no fqdn"
       VIRTUAL_HOST="own.cloud"
   fi
-cat > /etc/nginx/conf.d/default.conf <<EOF
+  rm -f /etc/nginx/sites-enabled/no-default
+  cat > /etc/nginx/sites-enabled/default.conf <<EOF
 # default server
 #
 server {
@@ -103,11 +104,7 @@ server {
     location ~ ^(.+?\.php)(/.*)?$ {
         try_files $1 = 404;
 
-        include fastcgi_params;
-        fastcgi_param SCRIPT_FILENAME $document_root$1;
-        fastcgi_param PATH_INFO $2;
-        fastcgi_param HTTPS on;
-        fastcgi_pass 127.0.0.1:9000;
+        include conf/fastcgi_params.conf;
     }
 
     location ~* ^.+\.(jpg|jpeg|gif|bmp|ico|png|css|js|swf)$ {
@@ -123,6 +120,7 @@ server {
 EOF
 
 
+  #
   if [ -z "$SSL_SELFSIGNED" ]; then
       echo "no SSL"
   else
@@ -136,11 +134,9 @@ EOF
         SSL_CIPHERS=$SSL_CIPHERS_DEFAULT
     fi
 
-    mkdir /etc/nginx/ssl/
+    mkdir -p /etc/nginx/ssl/
     chown nginx:nginx /etc/nginx/ssl/
 
-    ### <--
-    openssl req -x509 -nodes -days 3650 -newkey rsa:2048 -keyout server.key -out server.crt
     openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/nginx/ssl/nginx.key -out /etc/nginx/ssl/nginx.crt <<SSL
 CN
 Shanghai
@@ -151,7 +147,7 @@ $VIRTUAL_HOST
 li.zhiguang@moretv.com.cn
 SSL
 
-    cat > /etc/nginx/conf.d/ssl.conf <<EOF
+    cat > /etc/nginx/sites-enabled/ssl.conf <<EOF
 # default server
 #
 server {
@@ -161,8 +157,8 @@ server {
     ssl_certificate      /etc/nginx/ssl/nginx.crt;
     ssl_certificate_key  /etc/nginx/ssl/nginx.key;
     ssl_session_timeout  5m;
-    ssl_protocols        '"$SSL_PROTOCOLS"';
-    ssl_ciphers          '"$SSL_CIPHERS"';
+    ssl_protocols        $SSL_PROTOCOLS;
+    ssl_ciphers          $SSL_CIPHERS;
     ssl_prefer_server_ciphers   on;
 
     root /usr/share/nginx/owncloud;
@@ -197,11 +193,7 @@ server {
     location ~ ^(.+?\.php)(/.*)?$ {
         try_files $1 = 404;
 
-        include fastcgi_params;
-        fastcgi_param SCRIPT_FILENAME $document_root$1;
-        fastcgi_param PATH_INFO $2;
-        fastcgi_param HTTPS on;
-        fastcgi_pass 127.0.0.1:9000;
+        include conf/fastcgi_params.conf;
     }
 
     location ~* ^.+\.(jpg|jpeg|gif|bmp|ico|png|css|js|swf)$ {
@@ -215,6 +207,7 @@ server {
 }
 
 EOF
+  fi
 
   cat > /etc/php-fpm.conf <<EOF
 [global]
@@ -236,6 +229,7 @@ pm.max_spare_servers = 4
 catch_workers_output = yes
 php_admin_value[error_log] = /var/log/php-fpm/owncloud.php.log
 php_admin_value[sendmail_path] = /usr/bin/msmtp -t -C /etc/msmtprc
+
 EOF
   cd $DATA_DIR
 
@@ -309,6 +303,7 @@ serverurl=unix:///run/supervisor.sock ; use a unix:// URL  for a unix socket
 
 [include]
 files = /etc/supervisor/conf.d/*.conf
+
 EOF
   cat > /etc/supervisor/conf.d/owncloud.conf <<-EOF
 [program:php5-fpm]
@@ -324,6 +319,7 @@ EOF
 
   chown -R nginx:nginx $DATA_DIR
   chown -R nginx:nginx "$LOG_DIR/nginx"
+
 }
 
 post_start_action() {
