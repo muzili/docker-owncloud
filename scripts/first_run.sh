@@ -36,7 +36,7 @@ EOL
       MYSQL_HOST=`echo $MYSQL_NAME | /bin/awk -F "/" '{print $3}'`
       echo "MySQL host is $MYSQL_HOST"
       if [ -z "$MYSQL_USER" ]; then
-          echo "set MySQL user default to: root"
+          echo "set MySQL user default to: $MYSQL_ENV_USER"
           MYSQL_USER=$MYSQL_ENV_USER
       fi
       cat >$OC_PATH$FILE <<EOL
