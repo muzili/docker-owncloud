@@ -11,7 +11,7 @@ pre_start_action() {
   chown -R nginx:nginx $DATA_DIR
 
   echo "starting installation"
-  if [ -z "$MYSQL_ENV_MYSQL_ROOT_PASSWORD" ]; then
+  if [ -z "$MYSQL_ENV_PASS" ]; then
       echo "no linked mysql detected"
   else
     echo "linked mysql detected with container id $HOSTNAME and version $MYSQL_ENV_MYSQL_VERSION"
@@ -37,7 +37,7 @@ EOL
       echo "MySQL host is $MYSQL_HOST"
       if [ -z "$MYSQL_USER" ]; then
           echo "set MySQL user default to: root"
-          MYSQL_USER=root
+          MYSQL_USER=$MYSQL_ENV_USER
       fi
       cat >$OC_PATH$FILE <<EOL
 <?php
@@ -46,7 +46,7 @@ EOL
   "dbtype"        => "mysql",
   "dbname"        => "owncloud",
   "dbuser"        => "$MYSQL_USER",
-  "dbpass"        => "$MYSQL_ENV_MYSQL_ROOT_PASSWORD",
+  "dbpass"        => "$MYSQL_ENV_PASS",
   "dbhost"        => "$MYSQL_HOST",
   "dbtableprefix" => "$DB_PREFIX",
 );
