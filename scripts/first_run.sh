@@ -77,9 +77,9 @@ server {
     client_max_body_size 10G; # set max upload size
     fastcgi_buffers 64 4K;
 
-    rewrite ^/caldav(.*)$ /remote.php/caldav$1 redirect;
-    rewrite ^/carddav(.*)$ /remote.php/carddav$1 redirect;
-    rewrite ^/webdav(.*)$ /remote.php/webdav$1 redirect;
+    rewrite ^/caldav(.*)\$ /remote.php/caldav\$1 redirect;
+    rewrite ^/carddav(.*)\$ /remote.php/carddav\$1 redirect;
+    rewrite ^/webdav(.*)\$ /remote.php/webdav\$1 redirect;
 
     index index.php;
 
@@ -97,17 +97,18 @@ server {
         rewrite ^/.well-known/host-meta.json /public.php?service=host-meta-json last;
         rewrite ^/.well-known/carddav /remote.php/carddav/ redirect;
         rewrite ^/.well-known/caldav /remote.php/caldav/ redirect;
-        rewrite ^(/core/doc/[^\/]+/)$ $1/index.html;
-        try_files $uri $uri/ index.php;
+        rewrite ^(/core/doc/[^\/]+/)\$ \$1/index.html;
+        try_files \$uri \$uri/ index.php;
     }
 
-    location ~ ^(.+?\.php)(/.*)?$ {
-        try_files $1 = 404;
-
+    location ~ \.php(?:\$|/) {
+        fastcgi_split_path_info ^(.+\.php)(/.+)\$;
         include conf/fastcgi_params.conf;
+        fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
+        fastcgi_param PATH_INFO \$fastcgi_path_info;
     }
 
-    location ~* ^.+\.(jpg|jpeg|gif|bmp|ico|png|css|js|swf)$ {
+    location ~* ^.+\.(jpg|jpeg|gif|bmp|ico|png|css|js|swf)\$ {
         expires 30d;
         access_log off;
     }
@@ -166,9 +167,9 @@ server {
     client_max_body_size 10G; # set max upload size
     fastcgi_buffers 64 4K;
 
-    rewrite ^/caldav(.*)$ /remote.php/caldav$1 redirect;
-    rewrite ^/carddav(.*)$ /remote.php/carddav$1 redirect;
-    rewrite ^/webdav(.*)$ /remote.php/webdav$1 redirect;
+    rewrite ^/caldav(.*)\$ /remote.php/caldav\$1 redirect;
+    rewrite ^/carddav(.*)\$ /remote.php/carddav\$1 redirect;
+    rewrite ^/webdav(.*)\$ /remote.php/webdav\$1 redirect;
 
     index index.php;
 
@@ -186,17 +187,19 @@ server {
         rewrite ^/.well-known/host-meta.json /public.php?service=host-meta-json last;
         rewrite ^/.well-known/carddav /remote.php/carddav/ redirect;
         rewrite ^/.well-known/caldav /remote.php/caldav/ redirect;
-        rewrite ^(/core/doc/[^\/]+/)$ $1/index.html;
-        try_files $uri $uri/ index.php;
+        rewrite ^(/core/doc/[^\/]+/)\$ \$1/index.html;
+        try_files \$uri \$uri/ index.php;
     }
 
-    location ~ ^(.+?\.php)(/.*)?$ {
-        try_files $1 = 404;
-
+    location ~ \.php(?:\$|/) {
+        fastcgi_split_path_info ^(.+\.php)(/.+)\$;
         include conf/fastcgi_params.conf;
+        fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
+        fastcgi_param PATH_INFO \$fastcgi_path_info;
+        fastcgi_param HTTPS on;
     }
 
-    location ~* ^.+\.(jpg|jpeg|gif|bmp|ico|png|css|js|swf)$ {
+    location ~* ^.+\.(jpg|jpeg|gif|bmp|ico|png|css|js|swf)\$ {
         expires 30d;
         access_log off;
     }
